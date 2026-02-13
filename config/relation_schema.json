@@ -1,0 +1,89 @@
+﻿{
+    "relations":  [
+                      {
+                          "name":  "ADVERSE_EFFECT",
+                          "question_types":  [
+                                                 "binary",
+                                                 "list"
+                                             ],
+                          "patterns":  [
+                                           {
+                                               "regex":  "(?i)^(?:is|are)\\s+(.+?)\\s+associated\\s+with\\s+(.+?)\\s+therapy\\??$",
+                                               "args":  [
+                                                            "disease",
+                                                            "drug"
+                                                        ],
+                                               "direction":  "drug-\u003edisease",
+                                               "qtype":  "binary"
+                                           },
+                                           {
+                                               "regex":  "(?i)^(?:what\\s+side\\s+effects|list\\s+adverse\\s+events)\\s+of\\s+(.+?)\\??$",
+                                               "args":  [
+                                                            "drug"
+                                                        ],
+                                               "direction":  "drug-\u003edisease",
+                                               "qtype":  "list"
+                                           }
+                                       ]
+                      },
+                      {
+                          "name":  "INTERACTS_WITH",
+                          "question_types":  [
+                                                 "binary",
+                                                 "list",
+                                                 "which"
+                                             ],
+                          "patterns":  [
+                                           {
+                                               "regex":  "(?i)^(?:is|are)\\s+(.+?)\\s+associated\\s+with\\s+(.+?)\\s+therapy\\??$",
+                                               "args":  [
+                                                            "disease",
+                                                            "drug"
+                                                        ],
+                                               "direction":  "drug-\u003edisease",
+                                               "qtype":  "binary_ae_fallback"
+                                           },
+                                           {
+                                               "regex":  "(?i)^(?:which\\s+drugs\\s+interact\\s+with|list\\s+drugs\\s+that\\s+interact\\s+with)\\s+(.+?)\\??$",
+                                               "args":  [
+                                                            "target_or_drug"
+                                                        ],
+                                               "direction":  "drug-\u003eX",
+                                               "qtype":  "which"
+                                           }
+                                       ]
+                      }
+                  ],
+    "synonyms":  {
+                     "ADVERSE_EFFECT":  [
+                                            "adverse event",
+                                            "side effect",
+                                            "toxicity",
+                                            "ae"
+                                        ],
+                     "INTERACTS_WITH":  [
+                                            "interact",
+                                            "interaction",
+                                            "drug-drug",
+                                            "ddi"
+                                        ]
+                 },
+    "INTERACTS_WITH":  [
+                           "INTERACTS_WITH",
+                           "INTERACTS_WITH"
+                       ],
+    "ADVERSE_EFFECT":  [
+                           [
+                               "INTERACTS_WITH",
+                               "ADVERSE_EFFECT"
+                           ],
+                           [
+                               "CAUSES",
+                               "IS_A"
+                           ]
+                       ],
+    "CONTRAINDICATED_FOR":  [
+                                "ADVERSE_EFFECT",
+                                "IS_A"
+                            ]
+}

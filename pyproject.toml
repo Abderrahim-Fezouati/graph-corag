@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "graphcorag"
+version = "0.1.0"
+description = "Biomedical NLP + KG reasoning pipeline"
+authors = [{name = "Your Name"}]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["graphcorag*", "analyzer*"]
