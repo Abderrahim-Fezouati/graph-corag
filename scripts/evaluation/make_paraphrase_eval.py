@@ -1,0 +1,226 @@
+﻿import json, io, os, argparse
+
+
+def build_rows():
+    # 20 paraphrased queries (ASCII quotes to avoid smart-quote issues)
+    return [
+        {
+            "text": "Is there a clinically relevant interaction between adalimumab and afelimomab if they are given together?",
+            "head": "drug_adalimumab",
+            "rel1": "INTERACTS_WITH",
+            "tail1": "drug_afelimomab",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["ADALIMUMAB", "AFELIMOMAB"],
+            "require_entities": ["ADALIMUMAB", "AFELIMOMAB"],
+        },
+        {
+            "text": "Does treatment with adalimumab ever lead to hidradenitis suppurativa being reported as a side effect?",
+            "head": "drug_adalimumab",
+            "rel1": "ADVERSE_EFFECT",
+            "tail1": "disease_hidradenitis_suppurativa",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["ADALIMUMAB", "HIDRADENITIS SUPPURATIVA"],
+            "require_entities": ["ADALIMUMAB", "HIDRADENITIS SUPPURATIVA"],
+        },
+        {
+            "text": "Do antigens exhibit any interaction with peroxidase enzymes?",
+            "head": "drug_antigens",
+            "rel1": "INTERACTS_WITH",
+            "tail1": "drug_peroxidase",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["ANTIGENS", "PEROXIDASE"],
+            "require_entities": ["ANTIGENS", "PEROXIDASE"],
+        },
+        {
+            "text": "Have antigens been implicated in causing inflammatory bowel disease?",
+            "head": "drug_antigens",
+            "rel1": "ADVERSE_EFFECT",
+            "tail1": "disease_inflammatory_bowel_disease",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["ANTIGENS", "INFLAMMATORY BOWEL DISEASE"],
+            "require_entities": ["ANTIGENS", "INFLAMMATORY BOWEL DISEASE"],
+        },
+        {
+            "text": "Is bevacizumab known to interact with ramucirumab in any way?",
+            "head": "drug_bevacizumab",
+            "rel1": "INTERACTS_WITH",
+            "tail1": "drug_ramucirumab",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["BEVACIZUMAB", "RAMUCIRUMAB"],
+            "require_entities": ["BEVACIZUMAB", "RAMUCIRUMAB"],
+        },
+        {
+            "text": "Can ramucirumab therapy lead to lymphopenia as an adverse event?",
+            "head": "drug_ramucirumab",
+            "rel1": "ADVERSE_EFFECT",
+            "tail1": "disease_lymphopenia",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["RAMUCIRUMAB", "LYMPHOPENIA"],
+            "require_entities": ["RAMUCIRUMAB", "LYMPHOPENIA"],
+        },
+        {
+            "text": "Do autoantigens interact with RNA transcripts?",
+            "head": "drug_autoantigens",
+            "rel1": "INTERACTS_WITH",
+            "tail1": "drug_rna_transcript",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["AUTOANTIGENS", "RNA TRANSCRIPT"],
+            "require_entities": ["AUTOANTIGENS", "RNA TRANSCRIPT"],
+        },
+        {
+            "text": "Are autoantigens associated with multiple sclerosis as an outcome?",
+            "head": "drug_autoantigens",
+            "rel1": "ADVERSE_EFFECT",
+            "tail1": "disease_multiple_sclerosis",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["AUTOANTIGENS", "MULTIPLE SCLEROSIS"],
+            "require_entities": ["AUTOANTIGENS", "MULTIPLE SCLEROSIS"],
+        },
+        {
+            "text": "Is there evidence that carcinogens target or affect phosphotransferases?",
+            "head": "drug_carcinogens",
+            "rel1": "INTERACTS_WITH",
+            "tail1": "drug_phosphotransferases",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["CARCINOGENS", "PHOSPHOTRANSFERASES"],
+            "require_entities": ["CARCINOGENS", "PHOSPHOTRANSFERASES"],
+        },
+        {
+            "text": "Do carcinogens play a role in causing melanoma?",
+            "head": "drug_carcinogens",
+            "rel1": "ADVERSE_EFFECT",
+            "tail1": "disease_melanoma",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["CARCINOGENS", "MELANOMA"],
+            "require_entities": ["CARCINOGENS", "MELANOMA"],
+        },
+        {
+            "text": "Does DB-67 interact with human TOP1 (topoisomerase I)?",
+            "head": "drug_db_67",
+            "rel1": "INTERACTS_WITH",
+            "tail1": "drug_top1_protein_human",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["DB 67", "TOP1 PROTEIN HUMAN"],
+            "require_entities": ["DB 67", "TOP1 PROTEIN HUMAN"],
+        },
+        {
+            "text": "Is DB-67 linked to DNA strand breaks?",
+            "head": "drug_db_67",
+            "rel1": "ADVERSE_EFFECT",
+            "tail1": "disease_dna_strand_break",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["DB 67", "DNA STRAND BREAK"],
+            "require_entities": ["DB 67", "DNA STRAND BREAK"],
+        },
+        {
+            "text": "Do pegylated liposomal irinotecan formulations interact with human TOP1?",
+            "head": "drug_pegylated_liposomal_irinotecan",
+            "rel1": "INTERACTS_WITH",
+            "tail1": "drug_top1_protein_human",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["PEGYLATED LIPOSOMAL IRINOTECAN", "TOP1 PROTEIN HUMAN"],
+            "require_entities": [
+                "PEGYLATED LIPOSOMAL IRINOTECAN",
+                "TOP1 PROTEIN HUMAN",
+            ],
+        },
+        {
+            "text": "Are DNA strand breaks observed with pegylated liposomal irinotecan exposure?",
+            "head": "drug_pegylated_liposomal_irinotecan",
+            "rel1": "ADVERSE_EFFECT",
+            "tail1": "disease_dna_strand_break",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["PEGYLATED LIPOSOMAL IRINOTECAN", "DNA STRAND BREAK"],
+            "require_entities": ["PEGYLATED LIPOSOMAL IRINOTECAN", "DNA STRAND BREAK"],
+        },
+        {
+            "text": "Does alemtuzumab interact pharmacologically with ramucirumab?",
+            "head": "drug_alemtuzumab",
+            "rel1": "INTERACTS_WITH",
+            "tail1": "drug_ramucirumab",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["ALEMTUZUMAB", "RAMUCIRUMAB"],
+            "require_entities": ["ALEMTUZUMAB", "RAMUCIRUMAB"],
+        },
+        {
+            "text": "Is lymphopenia a reported effect of alemtuzumab?",
+            "head": "drug_alemtuzumab",
+            "rel1": "ADVERSE_EFFECT",
+            "tail1": "disease_lymphopenia",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["ALEMTUZUMAB", "LYMPHOPENIA"],
+            "require_entities": ["ALEMTUZUMAB", "LYMPHOPENIA"],
+        },
+        {
+            "text": "Do antigens interact with acetylcholinesterase?",
+            "head": "drug_antigens",
+            "rel1": "INTERACTS_WITH",
+            "tail1": "drug_acetylcholinesterase",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["ANTIGENS", "ACETYLCHOLINESTERASE"],
+            "require_entities": ["ANTIGENS", "ACETYLCHOLINESTERASE"],
+        },
+        {
+            "text": "Is anaphylaxis documented as an adverse event for antigens exposure?",
+            "head": "drug_antigens",
+            "rel1": "ADVERSE_EFFECT",
+            "tail1": "disease_anaphylaxis",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["ANTIGENS", "ANAPHYLAXIS"],
+            "require_entities": ["ANTIGENS", "ANAPHYLAXIS"],
+        },
+        {
+            "text": "Do antigens have a known interaction with deoxyribonuclease I?",
+            "head": "drug_antigens",
+            "rel1": "INTERACTS_WITH",
+            "tail1": "drug_deoxyribonuclease_i",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["ANTIGENS", "DEOXYRIBONUCLEASE I"],
+            "require_entities": ["ANTIGENS", "DEOXYRIBONUCLEASE I"],
+        },
+        {
+            "text": "Are psoriatic outcomes associated with antigen exposure?",
+            "head": "drug_antigens",
+            "rel1": "ADVERSE_EFFECT",
+            "tail1": "disease_psoriasis",
+            "rel2": "",
+            "tail2": "",
+            "boost_terms": ["ANTIGENS", "PSORIASIS"],
+            "require_entities": ["ANTIGENS", "PSORIASIS"],
+        },
+    ]
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", required=True)
+    args = ap.parse_args()
+    os.makedirs(os.path.dirname(args.out), exist_ok=True)
+    rows = build_rows()
+    with io.open(args.out, "w", encoding="utf-8") as f:
+        for j in rows:
+            f.write(json.dumps(j, ensure_ascii=False) + "\n")
+    print(f"[OK] wrote {len(rows)} -> {args.out}")
+
+
+if __name__ == "__main__":
+    main()

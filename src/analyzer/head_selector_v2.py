@@ -17,7 +17,7 @@ class HeadSelectorV2:
         self,
         min_score: float = 0.75,
         agreement_boost: float = 0.15,
-        max_boost: float = 0.30
+        max_boost: float = 0.30,
     ):
         """
         Args:
@@ -34,10 +34,7 @@ class HeadSelectorV2:
     # ---------------------------------------------------------
 
     def select_head(
-        self,
-        linked_mentions: List[List[Dict]],
-        relation: str,
-        slot: str
+        self, linked_mentions: List[List[Dict]], relation: str, slot: str
     ) -> Optional[str]:
         """
         Args:
@@ -92,13 +89,15 @@ class HeadSelectorV2:
             boost = min(self.max_boost, agreement * self.agreement_boost)
             final_score = base_score + boost
 
-            scored.append({
-                "kg_id": kg_id,
-                "base_score": base_score,
-                "agreement": len(cands),
-                "final_score": final_score,
-                "entity_type": cands[0].get("entity_type"),
-            })
+            scored.append(
+                {
+                    "kg_id": kg_id,
+                    "base_score": base_score,
+                    "agreement": len(cands),
+                    "final_score": final_score,
+                    "entity_type": cands[0].get("entity_type"),
+                }
+            )
 
         # Sort by final score
         scored.sort(key=lambda x: x["final_score"], reverse=True)

@@ -27,9 +27,7 @@ class NameNormalizer:
         if self.cfg_path not in ("", "default"):
             path = Path(self.cfg_path)
             if not path.is_file():
-                raise FileNotFoundError(
-                    f"NameNormalizer config not found: {path!s}"
-                )
+                raise FileNotFoundError(f"NameNormalizer config not found: {path!s}")
             # YAML is optional; if file is empty/null, fall back to {}
             loaded = yaml.safe_load(path.read_text(encoding="utf-8"))
             self.cfg = loaded or {}
@@ -57,11 +55,11 @@ class NameNormalizer:
         # Canonicalize quotes / dashes
         x = (
             x.replace("–", "-")
-             .replace("—", "-")
-             .replace("‐", "-")
-             .replace("’", "'")
-             .replace("‘", "'")
-             .replace("´", "'")
+            .replace("—", "-")
+            .replace("‐", "-")
+            .replace("’", "'")
+            .replace("‘", "'")
+            .replace("´", "'")
         )
 
         # Collapse whitespace

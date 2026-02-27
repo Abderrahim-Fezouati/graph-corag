@@ -146,16 +146,16 @@ def run_passage_ner(
     cmd = [
         ner_python,
         "scripts/run_ner_offline.py",
-        "--input", str(tmp_subset),
-        "--output", str(out_path),
+        "--input",
+        str(tmp_subset),
+        "--output",
+        str(out_path),
     ]
 
     print(f"[INFO] Passage NER START qid={out_path.stem} out={out_path}", flush=True)
     print(f"[INFO] Passage NER CMD: {' '.join(cmd)}", flush=True)
     subprocess.run(cmd, check=True, timeout=600)
     print(f"[INFO] Passage NER END qid={out_path.stem} out={out_path}", flush=True)
-
-
 
 
 # -----------------------------
@@ -187,17 +187,25 @@ def run_query_ner(
 
     with open(tmp_input, "w", encoding="utf-8") as out:
         for q in queries:
-            out.write(json.dumps({
-                "id": q["qid"],
-                "text": q["text"],
-            }) + "\n")
+            out.write(
+                json.dumps(
+                    {
+                        "id": q["qid"],
+                        "text": q["text"],
+                    }
+                )
+                + "\n"
+            )
 
     cmd = [
         ner_python,
         "scripts/run_ner_offline.py",
-        "--input", str(tmp_input),
-        "--output", str(tmp_output),
-        "--model", model,
+        "--input",
+        str(tmp_input),
+        "--output",
+        str(tmp_output),
+        "--model",
+        model,
     ]
 
     print(f"[INFO] Running query-level NER (model={model})...")
@@ -222,7 +230,9 @@ def pick_best_head_candidate(linked_groups: list, min_score: float):
         if not cands:
             continue
         cand = cands[0]
-        if best is None or float(cand.get("score", 0.0)) > float(best.get("score", 0.0)):
+        if best is None or float(cand.get("score", 0.0)) > float(
+            best.get("score", 0.0)
+        ):
             best = cand
     if best and float(best.get("score", 0.0)) >= float(min_score):
         return best
@@ -255,7 +265,9 @@ def resolve_query_ner_model(requested: str, ner_python: str) -> str:
 
     for cand in ["en_core_sci_lg", "en_core_sci_md", "en_core_sci_sm"]:
         if cand in installed:
-            print(f"[WARN] Query NER model '{requested}' not found; falling back to '{cand}'.")
+            print(
+                f"[WARN] Query NER model '{requested}' not found; falling back to '{cand}'."
+            )
             return cand
 
     if "en_ner_bc5cdr_md" in installed:
@@ -266,9 +278,12 @@ def resolve_query_ner_model(requested: str, ner_python: str) -> str:
         return "en_ner_bc5cdr_md"
 
     if installed:
-        print(f"[WARN] Query NER model '{requested}' not found; installed models: {installed}")
+        print(
+            f"[WARN] Query NER model '{requested}' not found; installed models: {installed}"
+        )
 
     return requested
+
 
 # -----------------------------
 # Main
@@ -350,7 +365,9 @@ def main():
     query_ner_path = None
     query_ner_mode = args.query_ner_mode
     query_mode = args.query_mode
-    query_ner_run_id = args.query_ner_run_id or datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    query_ner_run_id = args.query_ner_run_id or datetime.utcnow().strftime(
+        "%Y%m%d_%H%M%S"
+    )
     resolved_query_ner_model = args.query_ner_model
     if missing_head_queries:
         if query_ner_mode == "ensemble3":
@@ -425,12 +442,16 @@ def main():
         # 0b) Head grounding (query-level)
         # -------------------------
         if not head_cui:
-            linked_groups = el.link_mentions(
-                question=question,
-                mentions=query_mentions,
-                relation=relation,
-                slot="head",
-            ) if query_mentions else []
+            linked_groups = (
+                el.link_mentions(
+                    question=question,
+                    mentions=query_mentions,
+                    relation=relation,
+                    slot="head",
+                )
+                if query_mentions
+                else []
+            )
             missing_entity_type_count = sum(
                 1
                 for cands in linked_groups
@@ -449,111 +470,122 @@ def main():
             else:
                 ungrounded_head = True
 
-            head_debug_rows.append({
-                "qid": qid,
-                "text": question,
-                "mentions": query_mentions,
-                "mentions_by_model": mentions_for_qid_by_model,
-                "query_ner_models": query_ner_models,
-                "head_cui": head_cui,
-                "head_text": head_text,
-                "head_score": head_score,
-                "head_entity_type": (best or {}).get("entity_type"),
-                "head_entity_type_missing": bool(best) and not (best or {}).get("entity_type"),
-                "missing_entity_type_count": missing_entity_type_count,
-                "head_source": head_source,
-                "query_ner_model": resolved_query_ner_model,
-                "query_ner_mode": query_ner_mode,
-                "query_ner_run_id": query_ner_run_id,
-                "ner_python": args.ner_python,
-                "head_min_score": args.head_min_score,
-                "ungrounded_head": ungrounded_head,
-            })
+            head_debug_rows.append(
+                {
+                    "qid": qid,
+                    "text": question,
+                    "mentions": query_mentions,
+                    "mentions_by_model": mentions_for_qid_by_model,
+                    "query_ner_models": query_ner_models,
+                    "head_cui": head_cui,
+                    "head_text": head_text,
+                    "head_score": head_score,
+                    "head_entity_type": (best or {}).get("entity_type"),
+                    "head_entity_type_missing": bool(best)
+                    and not (best or {}).get("entity_type"),
+                    "missing_entity_type_count": missing_entity_type_count,
+                    "head_source": head_source,
+                    "query_ner_model": resolved_query_ner_model,
+                    "query_ner_mode": query_ner_mode,
+                    "query_ner_run_id": query_ner_run_id,
+                    "ner_python": args.ner_python,
+                    "head_min_score": args.head_min_score,
+                    "ungrounded_head": ungrounded_head,
+                }
+            )
 
         if ungrounded_head:
-            outputs.append({
-                "qid": qid,
-                "text": question,
-                "retrieved_docs": [],
-                "predicted_relation": relation,
-                "relation_in_kg": relation_in_kg,
-                "head_cui": head_cui,
-                "head_text": head_text,
-                "head_score": head_score,
-                "head_source": head_source,
-                "ungrounded_head": True,
-                "mentions": query_mentions,
-                "mentions_by_model": mentions_for_qid_by_model,
-                "query_ner_models": query_ner_models,
-                "ner_python": args.ner_python,
-                "claims": [],
-                "kg_validation": [],
-                "kg_validation_summary": {},
-            })
+            outputs.append(
+                {
+                    "qid": qid,
+                    "text": question,
+                    "retrieved_docs": [],
+                    "predicted_relation": relation,
+                    "relation_in_kg": relation_in_kg,
+                    "head_cui": head_cui,
+                    "head_text": head_text,
+                    "head_score": head_score,
+                    "head_source": head_source,
+                    "ungrounded_head": True,
+                    "mentions": query_mentions,
+                    "mentions_by_model": mentions_for_qid_by_model,
+                    "query_ner_models": query_ner_models,
+                    "ner_python": args.ner_python,
+                    "claims": [],
+                    "kg_validation": [],
+                    "kg_validation_summary": {},
+                }
+            )
             continue
 
         if query_mode == "kg_aligned":
             if not relation_in_kg:
                 skip_reason_counts["relation_not_in_kg"] += 1
-                outputs.append({
-                    "qid": qid,
-                    "text": question,
-                    "retrieved_docs": [],
-                    "predicted_relation": relation,
-                    "relation_in_kg": False,
-                    "skipped_reason": "relation_not_in_kg",
-                    "head_cui": head_cui,
-                    "head_text": head_text,
-                    "head_score": head_score,
-                    "head_source": head_source,
-                    "ungrounded_head": False,
-                    "mentions": query_mentions,
-                    "mentions_by_model": mentions_for_qid_by_model,
-                    "query_ner_models": query_ner_models,
-                    "ner_python": args.ner_python,
-                    "claims": [],
-                    "kg_validation": [],
-                    "kg_validation_summary": {},
-                })
+                outputs.append(
+                    {
+                        "qid": qid,
+                        "text": question,
+                        "retrieved_docs": [],
+                        "predicted_relation": relation,
+                        "relation_in_kg": False,
+                        "skipped_reason": "relation_not_in_kg",
+                        "head_cui": head_cui,
+                        "head_text": head_text,
+                        "head_score": head_score,
+                        "head_source": head_source,
+                        "ungrounded_head": False,
+                        "mentions": query_mentions,
+                        "mentions_by_model": mentions_for_qid_by_model,
+                        "query_ner_models": query_ner_models,
+                        "ner_python": args.ner_python,
+                        "claims": [],
+                        "kg_validation": [],
+                        "kg_validation_summary": {},
+                    }
+                )
                 continue
 
             tails = kg.tails(head_cui, relation)
             if not tails:
                 skip_reason_counts["no_kg_neighbors"] += 1
-                outputs.append({
-                    "qid": qid,
-                    "text": question,
-                    "retrieved_docs": [],
-                    "predicted_relation": relation,
-                    "relation_in_kg": True,
-                    "skipped_reason": "no_kg_neighbors",
-                    "head_cui": head_cui,
-                    "head_text": head_text,
-                    "head_score": head_score,
-                    "head_source": head_source,
-                    "ungrounded_head": False,
-                    "mentions": query_mentions,
-                    "mentions_by_model": mentions_for_qid_by_model,
-                    "query_ner_models": query_ner_models,
-                    "ner_python": args.ner_python,
-                    "claims": [],
-                    "kg_validation": [],
-                    "kg_validation_summary": {},
-                })
+                outputs.append(
+                    {
+                        "qid": qid,
+                        "text": question,
+                        "retrieved_docs": [],
+                        "predicted_relation": relation,
+                        "relation_in_kg": True,
+                        "skipped_reason": "no_kg_neighbors",
+                        "head_cui": head_cui,
+                        "head_text": head_text,
+                        "head_score": head_score,
+                        "head_source": head_source,
+                        "ungrounded_head": False,
+                        "mentions": query_mentions,
+                        "mentions_by_model": mentions_for_qid_by_model,
+                        "query_ner_models": query_ner_models,
+                        "ner_python": args.ner_python,
+                        "claims": [],
+                        "kg_validation": [],
+                        "kg_validation_summary": {},
+                    }
+                )
                 continue
 
             claims = []
             for tail in tails:
                 if not tail or tail == head_cui:
                     continue
-                claims.append({
-                    "head_cui": head_cui,
-                    "predicate": relation,
-                    "tail_cui": tail,
-                    "evidence_text": "",
-                    "claim_strength": "HYPOTHESIS",
-                    "claim_source": "KG",
-                })
+                claims.append(
+                    {
+                        "head_cui": head_cui,
+                        "predicate": relation,
+                        "tail_cui": tail,
+                        "evidence_text": "",
+                        "claim_strength": "HYPOTHESIS",
+                        "claim_source": "KG",
+                    }
+                )
 
             validations = []
             summary = Counter()
@@ -567,25 +599,27 @@ def main():
                 validations.append(res)
                 summary[res["verdict"].value] += 1
 
-            outputs.append({
-                "qid": qid,
-                "text": question,
-                "retrieved_docs": [],
-                "predicted_relation": relation,
-                "relation_in_kg": True,
-                "head_cui": head_cui,
-                "head_text": head_text,
-                "head_score": head_score,
-                "head_source": head_source,
-                "ungrounded_head": False,
-                "mentions": query_mentions,
-                "mentions_by_model": mentions_for_qid_by_model,
-                "query_ner_models": query_ner_models,
-                "ner_python": args.ner_python,
-                "claims": claims,
-                "kg_validation": validations,
-                "kg_validation_summary": dict(summary),
-            })
+            outputs.append(
+                {
+                    "qid": qid,
+                    "text": question,
+                    "retrieved_docs": [],
+                    "predicted_relation": relation,
+                    "relation_in_kg": True,
+                    "head_cui": head_cui,
+                    "head_text": head_text,
+                    "head_score": head_score,
+                    "head_source": head_source,
+                    "ungrounded_head": False,
+                    "mentions": query_mentions,
+                    "mentions_by_model": mentions_for_qid_by_model,
+                    "query_ner_models": query_ner_models,
+                    "ner_python": args.ner_python,
+                    "claims": claims,
+                    "kg_validation": validations,
+                    "kg_validation_summary": dict(summary),
+                }
+            )
             continue
 
         # -------------------------
@@ -631,33 +665,37 @@ def main():
             if not linked:
                 continue
 
-            passages.append({
-                "text": row["text"],
-                "linked_entities": linked,
-            })
+            passages.append(
+                {
+                    "text": row["text"],
+                    "linked_entities": linked,
+                }
+            )
 
         if not relation_in_kg:
             skip_reason_counts["relation_not_in_kg"] += 1
-            outputs.append({
-                "qid": qid,
-                "text": question,
-                "retrieved_docs": doc_ids,
-                "predicted_relation": relation,
-                "relation_in_kg": False,
-                "skipped_reason": "relation_not_in_kg",
-                "head_cui": head_cui,
-                "head_text": head_text,
-                "head_score": head_score,
-                "head_source": head_source,
-                "ungrounded_head": False,
-                "mentions": query_mentions,
-                "mentions_by_model": mentions_for_qid_by_model,
-                "query_ner_models": query_ner_models,
-                "ner_python": args.ner_python,
-                "claims": [],
-                "kg_validation": [],
-                "kg_validation_summary": {},
-            })
+            outputs.append(
+                {
+                    "qid": qid,
+                    "text": question,
+                    "retrieved_docs": doc_ids,
+                    "predicted_relation": relation,
+                    "relation_in_kg": False,
+                    "skipped_reason": "relation_not_in_kg",
+                    "head_cui": head_cui,
+                    "head_text": head_text,
+                    "head_score": head_score,
+                    "head_source": head_source,
+                    "ungrounded_head": False,
+                    "mentions": query_mentions,
+                    "mentions_by_model": mentions_for_qid_by_model,
+                    "query_ner_models": query_ner_models,
+                    "ner_python": args.ner_python,
+                    "claims": [],
+                    "kg_validation": [],
+                    "kg_validation_summary": {},
+                }
+            )
             continue
 
         # -------------------------
@@ -685,30 +723,35 @@ def main():
             validations.append(res)
             summary[res["verdict"].value] += 1
 
-        outputs.append({
-            "qid": qid,
-            "text": question,
-            "retrieved_docs": doc_ids,
-            "predicted_relation": relation,
-            "relation_in_kg": True,
-            "head_cui": head_cui,
-            "head_text": head_text,
-            "head_score": head_score,
-            "head_source": head_source,
-            "ungrounded_head": False,
-            "mentions": query_mentions,
-            "mentions_by_model": mentions_for_qid_by_model,
-            "query_ner_models": query_ner_models,
-            "ner_python": args.ner_python,
-            "claims": claims,
-            "kg_validation": validations,
-            "kg_validation_summary": dict(summary),
-        })
+        outputs.append(
+            {
+                "qid": qid,
+                "text": question,
+                "retrieved_docs": doc_ids,
+                "predicted_relation": relation,
+                "relation_in_kg": True,
+                "head_cui": head_cui,
+                "head_text": head_text,
+                "head_score": head_score,
+                "head_source": head_source,
+                "ungrounded_head": False,
+                "mentions": query_mentions,
+                "mentions_by_model": mentions_for_qid_by_model,
+                "query_ner_models": query_ner_models,
+                "ner_python": args.ner_python,
+                "claims": claims,
+                "kg_validation": validations,
+                "kg_validation_summary": dict(summary),
+            }
+        )
 
     print(f"[DEBUG] about to write outputs n={len(outputs)} to {args.out}", flush=True)
     write_jsonl(args.out, outputs)
     if head_debug_rows:
-        head_debug_path = Path(".tmp") / f"query_head_grounding.{query_ner_mode}.{query_ner_run_id}.jsonl"
+        head_debug_path = (
+            Path(".tmp")
+            / f"query_head_grounding.{query_ner_mode}.{query_ner_run_id}.jsonl"
+        )
         write_jsonl(head_debug_path, head_debug_rows)
         print(f"[INFO] Head grounding log: {head_debug_path}")
     if skip_reason_counts:

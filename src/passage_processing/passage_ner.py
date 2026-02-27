@@ -6,6 +6,7 @@ Reuses the same NER model used for queries.
 
 from typing import List, Dict
 
+
 class PassageNER:
     def __init__(self, ner_model):
         """
@@ -25,8 +26,5 @@ class PassageNER:
         out = []
         for e in ents:
             if "text" in e and e["text"].strip():
-                out.append({
-                    "text": e["text"],
-                    "label": e.get("label", "UNK")
-                })
+                out.append({"text": e["text"], "label": e.get("label", "UNK")})
         return out

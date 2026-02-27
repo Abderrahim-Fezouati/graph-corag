@@ -9,15 +9,18 @@ import faiss
 # Utilities
 ###############################################################################
 
+
 def normalize_surface(text: str) -> str:
     if not text:
         return ""
     return text.strip().lower()
 
+
 print()
 ###############################################################################
 # SapBERT Index Loading
 ###############################################################################
+
 
 def load_sapbert_index(index_dir: str) -> Dict[str, Any]:
     """
@@ -53,21 +56,16 @@ def load_sapbert_index(index_dir: str) -> Dict[str, Any]:
             f"SapBERT metadata length ({len(meta)}) does not match vectors ({vecs.shape[0]})"
         )
 
-    return {
-        "index": faiss_index,
-        "vectors": vecs,
-        "meta": meta
-    }
+    return {"index": faiss_index, "vectors": vecs, "meta": meta}
 
 
 ###############################################################################
 # SapBERT Linking
 ###############################################################################
 
+
 def link_with_sapbert(
-    sapbert: Dict[str, Any],
-    surfaces: List[str],
-    topk: int = 8
+    sapbert: Dict[str, Any], surfaces: List[str], topk: int = 8
 ) -> List[Dict[str, Any]]:
     """
     Given a list of normalized surface strings, embed using SapBERT vectors (via simple lookup)
@@ -89,19 +87,22 @@ def link_with_sapbert(
 
         # Exact match heuristic: find a meta entry with same surface
         exact_idxs = [
-            i for i, m in enumerate(meta)
+            i
+            for i, m in enumerate(meta)
             if normalize_surface(m.get("surface", "")) == surface
         ]
 
         if exact_idxs:
             # Direct match → ideal candidate
             i = exact_idxs[0]
-            out.append({
-                "surface": surface,
-                "cui": meta[i]["cui"],
-                "score": float(999.0),
-                "match": "exact"
-            })
+            out.append(
+                {
+                    "surface": surface,
+                    "cui": meta[i]["cui"],
+                    "score": float(999.0),
+                    "match": "exact",
+                }
+            )
             continue
 
         # KNN FAISS search fallback
@@ -111,11 +112,13 @@ def link_with_sapbert(
 
         dists, idxs = faiss_index.search(mean_vec, topk)
         for dist, idx in zip(dists[0], idxs[0]):
-            out.append({
-                "surface": surface,
-                "cui": meta[idx]["cui"],
-                "score": float(dist),
-                "match": "knn"
-            })
+            out.append(
+                {
+                    "surface": surface,
+                    "cui": meta[idx]["cui"],
+                    "score": float(dist),
+                    "match": "knn",
+                }
+            )
 
     return out

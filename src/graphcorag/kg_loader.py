@@ -7,14 +7,22 @@ from __future__ import annotations
 import csv, io, json, os
 from typing import Dict, Iterable, List, Optional, Set, Tuple
 
+
 def _norm_cui(x: Optional[str]) -> str:
-    return ("" if x is None else str(x).strip().lower())
+    return "" if x is None else str(x).strip().lower()
+
 
 def _norm_rel(x: Optional[str]) -> str:
-    return ("" if x is None else str(x).strip().upper())
+    return "" if x is None else str(x).strip().upper()
+
 
 class KG:
-    def __init__(self, kg_csv_path: str, dict_path: Optional[str] = None, overlay_path: Optional[str] = None):
+    def __init__(
+        self,
+        kg_csv_path: str,
+        dict_path: Optional[str] = None,
+        overlay_path: Optional[str] = None,
+    ):
         self.edge_set: Set[Tuple[str, str, str]] = set()
         self.out: Dict[Tuple[str, str], Set[str]] = {}
 
@@ -37,7 +45,9 @@ class KG:
                 self.edge_set.add((h, r, t))
                 self.out.setdefault((h, r), set()).add(t)
 
-        print(f"[KG] Loaded {len(self.edge_set)} edges from: {os.path.basename(kg_csv_path)}. Total unique now: {len(self.edge_set)}")
+        print(
+            f"[KG] Loaded {len(self.edge_set)} edges from: {os.path.basename(kg_csv_path)}. Total unique now: {len(self.edge_set)}"
+        )
 
         # Optional dictionary (JSON: CUI -> [surfaces])
         self.surface_dict: Dict[str, List[str]] = {}
@@ -59,7 +69,11 @@ class KG:
                 self.overlay = None
 
     def has_edge(self, head_cui: str, relation: str, tail_cui: str) -> bool:
-        return (_norm_cui(head_cui), _norm_rel(relation), _norm_cui(tail_cui)) in self.edge_set
+        return (
+            _norm_cui(head_cui),
+            _norm_rel(relation),
+            _norm_cui(tail_cui),
+        ) in self.edge_set
 
     def neighbors(self, head_cui: str, relation: str) -> List[str]:
         """Return sorted list of tails T with (head, relation, T) in KG."""
@@ -76,8 +90,10 @@ class KG:
                     return cui
         return None
 
+
 if __name__ == "__main__":
     import argparse
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--kg", required=True)
     ap.add_argument("--dict", default=None)

@@ -1,6 +1,7 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 import argparse, json, sys, importlib.util, os
 from typing import Any, Dict, List, Optional, Tuple
+
 
 def _safe_cui(v: Any) -> Optional[str]:
     if v is None:
@@ -9,6 +10,7 @@ def _safe_cui(v: Any) -> Optional[str]:
     if s in ("", "none", "null", "na", "n/a", "of"):  # guard "of" garbage value
         return None
     return str(v).strip()
+
 
 def _load_jsonl(path: str) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
@@ -23,42 +25,44 @@ def _load_jsonl(path: str) -> list[dict[str, Any]]:
                 print(f"[WARN] bad JSONL line: {e}", file=sys.stderr)
     return out
 
+
 def _import_from_path(py_path: str, obj_name: str):
-    spec = importlib.util.spec_from_file_location("mod_"+obj_name, py_path)
+    spec = importlib.util.spec_from_file_location("mod_" + obj_name, py_path)
     if spec is None or spec.loader is None:
         raise RuntimeError(f"Cannot import {obj_name} from {py_path}")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return getattr(mod, obj_name)
 
+
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--proj",    type=str, required=False, default="")
-    p.add_argument("--corpus",  type=str, required=True)
-    p.add_argument("--kg",      type=str, required=True)
-    p.add_argument("--dict",    type=str, required=True)
+    p.add_argument("--proj", type=str, required=False, default="")
+    p.add_argument("--corpus", type=str, required=True)
+    p.add_argument("--kg", type=str, required=True)
+    p.add_argument("--dict", type=str, required=True)
     p.add_argument("--overlay", type=str, required=True)
-    p.add_argument("--schema",  type=str, required=True)
+    p.add_argument("--schema", type=str, required=True)
     p.add_argument("--queries", type=str, required=True)
-    p.add_argument("--out",     type=str, required=True)
+    p.add_argument("--out", type=str, required=True)
 
     p.add_argument("--topk", type=int, default=80)
     p.add_argument("--min_constraints", type=int, default=2)
-    p.add_argument("--mode", choices=["text","kg","both"], default="both")
+    p.add_argument("--mode", choices=["text", "kg", "both"], default="both")
     p.add_argument(
         "--bm25_mod_path",
         type=str,
         required=False,
         default=None,
-        help="Optional. If omitted, BM25 is built from --corpus at runtime."
+        help="Optional. If omitted, BM25 is built from --corpus at runtime.",
     )
     p.add_argument("--dense_mod_path", type=str, required=True)
 
     args = p.parse_args()
 
     os.makedirs(args.out, exist_ok=True)
-    out_path  = os.path.join(args.out, "hybrid.outputs.jsonl")
-    rl_path   = os.path.join(args.out, "rl_eval.tsv")
+    out_path = os.path.join(args.out, "hybrid.outputs.jsonl")
+    rl_path = os.path.join(args.out, "rl_eval.tsv")
 
     # Log only to terminal (no log file on disk)
     log = sys.stdout
@@ -66,6 +70,7 @@ def main():
     # Import retrievers
     if args.bm25_mod_path is None:
         from graphcorag.text_retriever import TextRetriever
+
         bm25 = TextRetriever(args.corpus, args.dict, args.overlay)
         print("[INFO] BM25: Built dynamically from corpus at runtime.")
     else:
@@ -78,10 +83,13 @@ def main():
     # Minimal KG interface (expects CSV h,r,t headers or no header)
     def iter_kg_edges():
         import csv
+
         with open(args.kg, "r", encoding="utf-8") as f:
             r = csv.reader(f)
             peek = next(r)
-            has_hdr = (len(peek) >= 3 and {"h","r","t"}.issubset({x.strip().lower() for x in peek}))
+            has_hdr = len(peek) >= 3 and {"h", "r", "t"}.issubset(
+                {x.strip().lower() for x in peek}
+            )
             if not has_hdr:
                 yield tuple(peek[:3])
             for row in r:
@@ -91,6 +99,7 @@ def main():
 
     # Build quick neighbor index for INTERACTS_WITH / ADVERSE_EFFECT
     from collections import defaultdict
+
     nbr: dict[tuple[str, str], list[str]] = defaultdict(list)
     for h, r, t in iter_kg_edges():
         r2 = r.strip()
@@ -99,15 +108,18 @@ def main():
 
     examples = _load_jsonl(args.queries)
 
-    with open(out_path, "w", encoding="utf-8") as jout, \
-         open(rl_path, "w", encoding="utf-8") as rl:
+    with open(out_path, "w", encoding="utf-8") as jout, open(
+        rl_path, "w", encoding="utf-8"
+    ) as rl:
 
-        rl.write("qid,qtype,rel,goal,phase,coverage,ter,top1_score,top1_id,reward,hops\n")
+        rl.write(
+            "qid,qtype,rel,goal,phase,coverage,ter,top1_score,top1_id,reward,hops\n"
+        )
 
         for qi, ex in enumerate(examples, start=1):
-            qid   = ex.get("qid", f"Q{qi}")
+            qid = ex.get("qid", f"Q{qi}")
             qtext = ex.get("text") or ex.get("question") or ""
-            rels  = ex.get("relations") or []
+            rels = ex.get("relations") or []
 
             # Prefer canonical head if present, else fall back to head_cui
             head_raw = ex.get("head") or ex.get("head_cui")
@@ -135,8 +147,10 @@ def main():
             for _hit in de:
                 # accept dicts or tuples
                 if isinstance(_hit, dict):
-                    doc_id = _hit.get("id") or _hit.get("doc_id") or _hit.get("document_id")
-                    score  = float(_hit.get("score", 0.0))
+                    doc_id = (
+                        _hit.get("id") or _hit.get("doc_id") or _hit.get("document_id")
+                    )
+                    score = float(_hit.get("score", 0.0))
                 elif isinstance(_hit, (list, tuple)) and len(_hit) >= 2:
                     a, b = _hit[0], _hit[1]
                     # tolerate (score, id) or (id, score)
@@ -150,7 +164,9 @@ def main():
                     continue
                 scores[doc_id] = max(scores.get(doc_id, 0.0), float(score))
 
-            top_sorted = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:args.topk]
+            top_sorted = sorted(scores.items(), key=lambda x: x[1], reverse=True)[
+                : args.topk
+            ]
             top1 = top_sorted[0] if top_sorted else ("N/A", 0.0)
 
             # KG side
@@ -162,18 +178,23 @@ def main():
                     if (head, rel) in nbr:
                         # collect neighbors briefly
                         for t in nbr[(head, rel)][:8]:
-                            kg_verdicts.append({"edge": (head, rel, t), "present": True})
+                            kg_verdicts.append(
+                                {"edge": (head, rel, t), "present": True}
+                            )
                         coverage = 1.0 if kg_verdicts else 0.0
                         qtype = "ddi" if rel == "INTERACTS_WITH" else "ae"
                         break  # take the first relation that hits
 
             decision = "supported" if coverage > 0 else "insufficient_text_support"
-            reward   = 1.0 if coverage > 0 else 0.0
-            ter      = float(len(top_sorted))/float(args.topk or 1)
+            reward = 1.0 if coverage > 0 else 0.0
+            ter = float(len(top_sorted)) / float(args.topk or 1)
 
             print("=" * 80, file=log)
             print(f"Query {qi}: {qtext}", file=log)
-            print(f"text_topk: {len(top_sorted)} results; top1=({top1[0]}, {top1[1]})", file=log)
+            print(
+                f"text_topk: {len(top_sorted)} results; top1=({top1[0]}, {top1[1]})",
+                file=log,
+            )
             print(f"kg_verdicts: {kg_verdicts}", file=log)
             print(f"coverage: {coverage:.3f}", file=log)
             print(f"decision: {decision}", file=log)
@@ -193,10 +214,13 @@ def main():
                 "hops": hop_count,
             }
             jout.write(json.dumps(jrow, ensure_ascii=False) + "\n")
-            rl.write(f"{qi},{qtype},{rels[0] if rels else ''},{rels[0] if rels else ''},eval,{coverage:.3f},{ter:.3f},{top1[1]},{top1[0]},{reward},{hop_count}\n")
+            rl.write(
+                f"{qi},{qtype},{rels[0] if rels else ''},{rels[0] if rels else ''},eval,{coverage:.3f},{ter:.3f},{top1[1]},{top1[0]},{reward},{hop_count}\n"
+            )
 
     print(f"Out:  {out_path}")
     print(f"RL:   {rl_path}")
+
 
 if __name__ == "__main__":
     main()

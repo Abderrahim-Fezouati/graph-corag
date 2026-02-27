@@ -25,13 +25,11 @@ PREDICATE_CLASSES: Dict[str, str] = {
     "AMELIORATES": "positive",
     "PREVENTS": "positive",
     "INHIBITS": "positive",
-
     # Negative / harmful
     "CAUSES": "negative",
     "INDUCES": "negative",
     "ADVERSE_EFFECT": "negative",
     "CONTRAINDICATED_FOR": "negative",
-
     # Neutral / descriptive
     "INTERACTS_WITH": "neutral",
     "ASSOCIATED_WITH": "neutral",
@@ -49,10 +47,8 @@ ANTAGONISTIC_PAIRS: Set[Tuple[str, str]] = {
     ("TREATS", "CAUSES"),
     ("TREATS", "ADVERSE_EFFECT"),
     ("TREATS", "CONTRAINDICATED_FOR"),
-
     ("PREVENTS", "CAUSES"),
     ("INHIBITS", "ACTIVATES"),
-
     ("AMELIORATES", "INDUCES"),
 }
 
@@ -60,6 +56,7 @@ ANTAGONISTIC_PAIRS: Set[Tuple[str, str]] = {
 # -------------------------------------------------
 # Helper utilities
 # -------------------------------------------------
+
 
 def normalize_predicate(p: str) -> str:
     return (p or "").strip().upper()

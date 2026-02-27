@@ -4,6 +4,7 @@
     Each hit is expected to be a tuple: (score, doc_id)
     Replace with your real reranker later.
     """
+
     def __init__(self, **kwargs):
         pass
 

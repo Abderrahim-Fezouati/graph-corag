@@ -10,22 +10,17 @@ from pathlib import Path
 
 class RelationClassifier:
 
-    LABELS = [
-        "INTERACTS_WITH",
-        "ADVERSE_EFFECT",
-        "CAUSES",
-        "NO_RELATION"
-    ]
+    LABELS = ["INTERACTS_WITH", "ADVERSE_EFFECT", "CAUSES", "NO_RELATION"]
 
     def __init__(self, model_root="models/biobert-base-cased-v1.2"):
         print("[RelationClassifier] Loading BioBERT offline from:")
         print(f"  {model_root}")
 
-        self.tokenizer = AutoTokenizer.from_pretrained(model_root, local_files_only=True)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_root, local_files_only=True
+        )
         self.model = AutoModelForSequenceClassification.from_pretrained(
-            model_root,
-            num_labels=len(self.LABELS),
-            local_files_only=True
+            model_root, num_labels=len(self.LABELS), local_files_only=True
         )
         self.model.eval()
 

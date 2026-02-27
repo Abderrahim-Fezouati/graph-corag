@@ -2,10 +2,29 @@
 
 YESNO_RE = re.compile(r"^(is|does|do|are|can|could|would|whether)\b", re.I)
 PRED_CUES = {
-    "ADVERSE_EFFECT": [r"adverse effect", r"side effect", r"toxicit", r"hepatotox", r"nephrotox", r"pneumonitis"],
-    "INTERACTS_WITH": [r"interact", r"contraindicat", r"co[- ]?admin", r"drug[- ]?drug", r"increase[s]? levels", r"reduce[s]? levels"],
-    "INDICATION":    [r"indicat", r"treat[s]?|treatment", r"for \b.*\b(cancer|disease|condition|syndrome)"]
+    "ADVERSE_EFFECT": [
+        r"adverse effect",
+        r"side effect",
+        r"toxicit",
+        r"hepatotox",
+        r"nephrotox",
+        r"pneumonitis",
+    ],
+    "INTERACTS_WITH": [
+        r"interact",
+        r"contraindicat",
+        r"co[- ]?admin",
+        r"drug[- ]?drug",
+        r"increase[s]? levels",
+        r"reduce[s]? levels",
+    ],
+    "INDICATION": [
+        r"indicat",
+        r"treat[s]?|treatment",
+        r"for \b.*\b(cancer|disease|condition|syndrome)",
+    ],
 }
+
 
 def detect_predicate(text):
     text_l = text.lower()
@@ -14,6 +33,7 @@ def detect_predicate(text):
         if any(re.search(p, text_l) for p in pats):
             found.append(rel)
     return found
+
 
 def route_intent(q, extracted_surfaces):
     text = q.strip()

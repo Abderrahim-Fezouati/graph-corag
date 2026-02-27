@@ -8,6 +8,7 @@ from analyzer.sapbert_linker_v2 import SapBERTLinkerV2
 # Surface normalization
 # ============================================================
 
+
 def normalize_surface(text: str) -> str:
     """
     Normalize surface strings consistently across NER, SapBERT, and KG.
@@ -22,8 +23,8 @@ def normalize_surface(text: str) -> str:
 # ============================================================
 
 REL_TYPES = {
-    "INTERACTS_WITH":      (["drug", "protein"], ["drug", "protein"]),
-    "ADVERSE_EFFECT":      (["drug"], ["disease"]),
+    "INTERACTS_WITH": (["drug", "protein"], ["drug", "protein"]),
+    "ADVERSE_EFFECT": (["drug"], ["disease"]),
     "CONTRAINDICATED_FOR": (["drug"], ["disease"]),
     "MECHANISM_OF_ACTION": (["drug"], ["protein", "gene"]),
 }
@@ -35,8 +36,7 @@ def get_allowed_types(relation: str, slot: str) -> List[str]:
     """
     rel = (relation or "").upper()
     head_allowed, tail_allowed = REL_TYPES.get(
-        rel,
-        (["drug", "disease", "protein", "gene", "chemical"],) * 2
+        rel, (["drug", "disease", "protein", "gene", "chemical"],) * 2
     )
     return head_allowed if slot == "head" else tail_allowed
 
@@ -44,6 +44,7 @@ def get_allowed_types(relation: str, slot: str) -> List[str]:
 # ============================================================
 # Entity Linking Adapter
 # ============================================================
+
 
 class ELAdapter:
     """
@@ -65,7 +66,7 @@ class ELAdapter:
         self,
         linker: Optional[Any] = None,
         reranker: Optional[Any] = None,
-        default_topk: int = 8
+        default_topk: int = 8,
     ):
         # Legacy linker is OPTIONAL and deprecated
         self.linker = linker
@@ -80,10 +81,7 @@ class ELAdapter:
     # --------------------------------------------------------
 
     def _sapbert_v2_link(
-        self,
-        mention_text: str,
-        relation: str,
-        slot: str
+        self, mention_text: str, relation: str, slot: str
     ) -> List[Dict[str, Any]]:
         """
         Try SapBERT v2 using allowed entity types.
@@ -96,15 +94,17 @@ class ELAdapter:
             result = self.sapbert_v2.link(mention_text, etype)
 
             if result.get("kg_id") is not None:
-                return [{
-                    "kg_id": result["kg_id"],
-                    "name": result["kg_id"],
-                    "canonical_id": result["kg_id"],
-                    "entity_type": etype,
-                    "score": float(result["score"]),
-                    "ctx_score": 0.0,
-                    "linker": "sapbert_v2",
-                }]
+                return [
+                    {
+                        "kg_id": result["kg_id"],
+                        "name": result["kg_id"],
+                        "canonical_id": result["kg_id"],
+                        "entity_type": etype,
+                        "score": float(result["score"]),
+                        "ctx_score": 0.0,
+                        "linker": "sapbert_v2",
+                    }
+                ]
 
         return []
 
@@ -113,11 +113,7 @@ class ELAdapter:
     # --------------------------------------------------------
 
     def _routed_link(
-        self,
-        mention_text: str,
-        relation: str,
-        slot: str,
-        topk: Optional[int] = None
+        self, mention_text: str, relation: str, slot: str, topk: Optional[int] = None
     ) -> List[Dict[str, Any]]:
 
         # 1️⃣ Primary SapBERT v2
@@ -134,36 +130,23 @@ class ELAdapter:
 
         if hasattr(self.linker, "link"):
             try:
-                return self.linker.link(
-                    mention_text,
-                    expected_types=types,
-                    topk=k
-                )
+                return self.linker.link(mention_text, expected_types=types, topk=k)
             except TypeError:
                 return self.linker.link(mention_text, topk=k)
 
         if hasattr(self.linker, "link_text"):
             try:
-                return self.linker.link_text(
-                    mention_text,
-                    expected_types=types,
-                    topk=k
-                )
+                return self.linker.link_text(mention_text, expected_types=types, topk=k)
             except TypeError:
                 return self.linker.link_text(mention_text, topk=k)
 
         if hasattr(self.linker, "link_mentions"):
             try:
                 return self.linker.link_mentions(
-                    [mention_text],
-                    expected_types=types,
-                    topk=k
+                    [mention_text], expected_types=types, topk=k
                 )[0]
             except TypeError:
-                return self.linker.link_mentions(
-                    [mention_text],
-                    topk=k
-                )[0]
+                return self.linker.link_mentions([mention_text], topk=k)[0]
 
         # 🔒 SAFE FALLBACK — NO CRASH
         return []
@@ -178,7 +161,7 @@ class ELAdapter:
         mentions: List[str],
         relation: str,
         slot: str,
-        topk: Optional[int] = None
+        topk: Optional[int] = None,
     ) -> List[List[Dict[str, Any]]]:
 
         results: List[List[Dict[str, Any]]] = []
@@ -193,15 +176,10 @@ class ELAdapter:
 
             if self.reranker:
                 cands = self.reranker.rerank(
-                    question,
-                    cands,
-                    topk=topk or self.default_topk
+                    question, cands, topk=topk or self.default_topk
                 )
 
-            cands = _apply_type_priority(
-                cands,
-                get_allowed_types(relation, slot)
-            )
+            cands = _apply_type_priority(cands, get_allowed_types(relation, slot))
 
             results.append(cands[: (topk or self.default_topk)])
 
@@ -213,16 +191,10 @@ class ELAdapter:
         mentions: List[str],
         relation: str,
         slot: str,
-        topk: Optional[int] = None
+        topk: Optional[int] = None,
     ) -> List[str]:
 
-        linked = self.link_mentions(
-            question,
-            mentions,
-            relation,
-            slot,
-            topk=topk
-        )
+        linked = self.link_mentions(question, mentions, relation, slot, topk=topk)
 
         out: List[str] = []
         for cands in linked:
@@ -236,27 +208,25 @@ class ELAdapter:
     # --------------------------------------------------------
 
     def _normalize_candidates(
-        self,
-        cands: List[Dict[str, Any]]
+        self, cands: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
 
         out: List[Dict[str, Any]] = []
 
         for c in cands or []:
-            out.append({
-                "kg_id": c.get("kg_id"),
-                "name": c.get("name") or "",
-                "canonical_id": c.get("canonical_id"),
-                "entity_type": c.get("entity_type"),
-                "score": float(c.get("score", 0.0)),
-                "ctx_score": float(c.get("ctx_score", 0.0)),
-                "linker": c.get("linker", "unknown"),
-            })
+            out.append(
+                {
+                    "kg_id": c.get("kg_id"),
+                    "name": c.get("name") or "",
+                    "canonical_id": c.get("canonical_id"),
+                    "entity_type": c.get("entity_type"),
+                    "score": float(c.get("score", 0.0)),
+                    "ctx_score": float(c.get("ctx_score", 0.0)),
+                    "linker": c.get("linker", "unknown"),
+                }
+            )
 
-        out.sort(
-            key=lambda x: (x["ctx_score"], x["score"]),
-            reverse=True
-        )
+        out.sort(key=lambda x: (x["ctx_score"], x["score"]), reverse=True)
         return out
 
 
@@ -264,9 +234,9 @@ class ELAdapter:
 # Type priority helper
 # ============================================================
 
+
 def _apply_type_priority(
-    cands: List[Dict[str, Any]],
-    expected_types: List[str]
+    cands: List[Dict[str, Any]], expected_types: List[str]
 ) -> List[Dict[str, Any]]:
 
     exp = set(expected_types or [])

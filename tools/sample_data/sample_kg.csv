@@ -1,0 +1,10 @@
+head,relation,tail
+"drug_antigens",ADVERSE_EFFECT,"disease_immune_tolerance"
+"drug_aldesleukin",INTERACTS_WITH,"drug_receptors_interleukin_2"
+"drug_antigens",ADVERSE_EFFECT,"disease_antibody_dependent_enhancement"
+"drug_alemtuzumab",INTERACTS_WITH,"drug_cd52_protein_human"
+"drug_autoantigens",ADVERSE_EFFECT,"disease_autoimmune_reaction"
+"drug_carcinogens",ADVERSE_EFFECT,"disease_carcinogen_effect_in_offspring"
+"drug_db_67",ADVERSE_EFFECT,"disease_dna_strand_break"
+"drug_pegylated_liposomal_irinotecan",ADVERSE_EFFECT,"disease_dna_strand_break"
+"drug_tenifatecan",ADVERSE_EFFECT,"disease_dna_strand_break"

@@ -72,15 +72,17 @@ def build_claims(
             if not tail or tail == head_cui:
                 continue
 
-            claims.append({
-                "head_cui": head_cui,
-                "predicate": predicate,
-                "tail_cui": tail,
-                "evidence_text": text,
-                # --- epistemics ---
-                "claim_strength": "HYPOTHESIS",
-                "claim_source": "PASSAGE",
-            })
+            claims.append(
+                {
+                    "head_cui": head_cui,
+                    "predicate": predicate,
+                    "tail_cui": tail,
+                    "evidence_text": text,
+                    # --- epistemics ---
+                    "claim_strength": "HYPOTHESIS",
+                    "claim_source": "PASSAGE",
+                }
+            )
 
     return claims
 
@@ -98,10 +100,12 @@ def build_claims_from_passages(
     Legacy wrapper — preserved for older pipelines.
     """
     return build_claims(
-        passages=[{
-            "text": passage_text,
-            "linked_entities": linked_entities,
-        }],
+        passages=[
+            {
+                "text": passage_text,
+                "linked_entities": linked_entities,
+            }
+        ],
         head_cui=head_cui,
         relation=None,
     )

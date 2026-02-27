@@ -7,6 +7,7 @@ from typing import List, Dict
 from analyzer.sapbert_linker_v2 import SapBERTLinkerV2
 from analyzer.entity_linking_adapter import normalize_surface
 
+
 class PassageEntityLinker:
     def __init__(self, sapbert: SapBERTLinkerV2):
         self.sapbert = sapbert
@@ -26,10 +27,12 @@ class PassageEntityLinker:
 
             cands = self.sapbert.link(surface, topk=topk)
             for c in cands:
-                linked.append({
-                    "surface": surface,
-                    "kg_id": c.get("kg_id"),
-                    "score": c.get("score", 0.0),
-                    "entity_type": c.get("entity_type")
-                })
+                linked.append(
+                    {
+                        "surface": surface,
+                        "kg_id": c.get("kg_id"),
+                        "score": c.get("score", 0.0),
+                        "entity_type": c.get("entity_type"),
+                    }
+                )
         return linked

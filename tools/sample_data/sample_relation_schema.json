@@ -1,0 +1,18 @@
+{
+  "relations": [
+    {
+      "name": "ADVERSE_EFFECT",
+      "question_types": ["binary","list"],
+      "patterns": [
+        {"regex": "(?i)^(?:is|are)\\s+(.+?)\\s+associated\\s+with\\s+(.+?)\\s+therapy\\??$","args": ["disease","drug"],"direction": "drug->disease","qtype": "binary"}
+      ]
+    },
+    {
+      "name": "INTERACTS_WITH",
+      "question_types": ["binary","list","which"],
+      "patterns": [
+        {"regex": "(?i)^(?:which\\s+drugs\\s+interact\\s+with|list\\s+drugs\\s+that\\s+interact\\s+with)\\s+(.+?)\\??$","args": ["target_or_drug"],"direction": "drug->X","qtype": "which"}
+      ]
+    }
+  ]
+}

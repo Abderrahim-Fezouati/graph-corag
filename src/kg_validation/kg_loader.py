@@ -20,17 +20,19 @@ from typing import Dict, List, Optional, Set, Tuple
 # Normalization helpers
 # -----------------------------
 
+
 def _norm_cui(x: Optional[str]) -> str:
-    return ("" if x is None else str(x).strip().lower())
+    return "" if x is None else str(x).strip().lower()
 
 
 def _norm_rel(x: Optional[str]) -> str:
-    return ("" if x is None else str(x).strip().upper())
+    return "" if x is None else str(x).strip().upper()
 
 
 # -----------------------------
 # KG Loader (Read-Only)
 # -----------------------------
+
 
 class KGLoader:
     """
@@ -117,14 +119,10 @@ class KGLoader:
         ) in self.edge_set
 
     def tails(self, head: str, predicate: str) -> List[str]:
-        return sorted(
-            self.hp_to_tails.get((_norm_cui(head), _norm_rel(predicate)), [])
-        )
+        return sorted(self.hp_to_tails.get((_norm_cui(head), _norm_rel(predicate)), []))
 
     def predicates_between(self, head: str, tail: str) -> List[str]:
-        return sorted(
-            self.ht_to_preds.get((_norm_cui(head), _norm_cui(tail)), [])
-        )
+        return sorted(self.ht_to_preds.get((_norm_cui(head), _norm_cui(tail)), []))
 
     def outgoing(self, head: str) -> List[Tuple[str, str]]:
         return self.h_to_edges.get(_norm_cui(head), [])

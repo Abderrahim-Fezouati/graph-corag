@@ -1,0 +1,183 @@
+Run Snapshot Forensics - 20260128_185028
+
+runs* directories at repo root: NONE
+
+run_* folders found:
+
+Contents for: D:\graph-corag-clean\.tmp\pipeline_test_full\run_pipeline_out
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\run_smoke
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_autogen20
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251113_1651
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251113_1656
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251115_1944
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251115_1945
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251115_1955
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251115_2007
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251115_2137
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251115_2138
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251115_2140
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251115_2141
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large files\large_backups_20251117_132909\out\run_from_raw_20251115_2145
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_autogen20_bm25
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_autogen20_both
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_bm25_surf2cui_smoke
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_from_raw
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_from_raw_20251113_1656
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_from_raw_20251113_1707
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_from_raw_20251115_2007
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_from_raw_20251115_2137
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_from_raw_20251115_2138
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_from_raw_20251115_2140
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_from_raw_20251115_2141
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_from_raw_20251115_2145
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_from_raw_20251115_2154
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_router_probe
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+Contents for: D:\graph-corag-clean\archives\large_backups_20251117_132909\out\run_sapbert40_both
+  [logs] MISSING
+  [outputs] MISSING
+  [cmd] MISSING
+  [config_snapshot] MISSING
+
+inputs.json files: NONE
+
+Latest .tmp/pipeline_*:

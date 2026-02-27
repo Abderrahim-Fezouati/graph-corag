@@ -63,3 +63,10 @@ large_files/
 *~
 old_sapbert_scripts/
 archives/
+data/
+data_processed/
+.tmp/
+models/
+tests/
+.venv/
+*.log

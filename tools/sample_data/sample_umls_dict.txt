@@ -1,0 +1,17 @@
+{
+  "drug_adalimumab": [
+    "ADALIMUMAB",
+    "Adalimumab",
+    "adalimumab"
+  ],
+  "drug_pembrolizumab": [
+    "PEMBROLIZUMAB",
+    "Pembrolizumab",
+    "pembrolizumab"
+  ],
+  "drug_tacrolimus": [
+    "TACROLIMUS",
+    "Tacrolimus",
+    "tacrolimus"
+  ]
+}

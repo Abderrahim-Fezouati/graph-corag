@@ -43,6 +43,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 # Helper: L2 normalize numpy vectors
 # ============================================================
 
+
 def l2_normalize(vec: np.ndarray) -> np.ndarray:
     norm = np.linalg.norm(vec, axis=1, keepdims=True)
     return vec / np.clip(norm, a_min=1e-12, a_max=None)
@@ -52,16 +53,15 @@ def l2_normalize(vec: np.ndarray) -> np.ndarray:
 # SapBERT Linker V2
 # ============================================================
 
+
 class SapBERTLinkerV2:
     def __init__(self):
         # Load model (offline only)
         self.tokenizer = AutoTokenizer.from_pretrained(
-            SAPBERT_MODEL_PATH,
-            local_files_only=True
+            SAPBERT_MODEL_PATH, local_files_only=True
         )
         self.model = AutoModel.from_pretrained(
-            SAPBERT_MODEL_PATH,
-            local_files_only=True
+            SAPBERT_MODEL_PATH, local_files_only=True
         ).to(DEVICE)
         self.model.eval()
 
@@ -99,7 +99,7 @@ class SapBERTLinkerV2:
                 padding=True,
                 truncation=True,
                 max_length=MAX_LENGTH,
-                return_tensors="pt"
+                return_tensors="pt",
             )
             encoded = {k: v.to(DEVICE) for k, v in encoded.items()}
 
@@ -113,11 +113,7 @@ class SapBERTLinkerV2:
     # Public API
     # --------------------------------------------------------
 
-    def link(
-        self,
-        surface: str,
-        entity_type: str
-    ) -> Dict[str, Any]:
+    def link(self, surface: str, entity_type: str) -> Dict[str, Any]:
         """
         Link a surface string to a KG entity.
 
@@ -139,7 +135,7 @@ class SapBERTLinkerV2:
                 "entity_type": entity_type,
                 "kg_id": None,
                 "score": 0.0,
-                "source": "sapbert_invalid_type"
+                "source": "sapbert_invalid_type",
             }
 
         # Embed query
@@ -160,7 +156,7 @@ class SapBERTLinkerV2:
                 "entity_type": entity_type,
                 "kg_id": None,
                 "score": 0.0,
-                "source": "sapbert_no_result"
+                "source": "sapbert_no_result",
             }
 
         best_idx = int(indices[0])
@@ -172,7 +168,7 @@ class SapBERTLinkerV2:
                 "entity_type": entity_type,
                 "kg_id": None,
                 "score": best_score,
-                "source": "sapbert_low_conf"
+                "source": "sapbert_low_conf",
             }
 
         best_row = rows[best_idx]
@@ -182,5 +178,5 @@ class SapBERTLinkerV2:
             "entity_type": entity_type,
             "kg_id": best_row["kg_id"],
             "score": best_score,
-            "source": "sapbert"
+            "source": "sapbert",
         }

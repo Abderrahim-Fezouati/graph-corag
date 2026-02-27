@@ -1,0 +1,14 @@
+﻿lowercase: true
+unicode_nfkc: true
+dedupe_whitespace: true
+strip_punct: false
+variants:
+  - replace: ["_", " "]
+  - replace: ["-", " "]
+  - collapse_spaces: true
+prefix_strippers:
+  - "^drug_"
+  - "^disease_"
+  - "^gene_"
+  - "^chemical_"
+  - "^protein_"

@@ -43,11 +43,16 @@ def main():
                 for ent in doc.ents
             ]
 
-            out.write(json.dumps({
-                "id": doc_id,
-                "text": text,
-                "ents": ents,
-            }) + "\n")
+            out.write(
+                json.dumps(
+                    {
+                        "id": doc_id,
+                        "text": text,
+                        "ents": ents,
+                    }
+                )
+                + "\n"
+            )
 
     print(f"[DONE] wrote NER JSONL -> {args.output}")
 

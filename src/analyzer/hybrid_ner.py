@@ -24,9 +24,9 @@ class HybridNER:
                 out.append((surf, "DICT"))
         return out
 
-    def merge(self,
-              ml_entities: List[Tuple[str, str]],
-              dict_entities: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
+    def merge(
+        self, ml_entities: List[Tuple[str, str]], dict_entities: List[Tuple[str, str]]
+    ) -> List[Tuple[str, str]]:
         out = set()
         for text, label in ml_entities:
             norm = normalize_surface(text)

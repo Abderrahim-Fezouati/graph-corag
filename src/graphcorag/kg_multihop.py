@@ -2,8 +2,8 @@
 from collections import defaultdict, deque
 from typing import Dict, List, Tuple, Optional, Set
 
-Triple = Tuple[str, str, str]        # (src, rel, tgt)
-Edge = Tuple[str, str]               # (rel, tgt)
+Triple = Tuple[str, str, str]  # (src, rel, tgt)
+Edge = Tuple[str, str]  # (rel, tgt)
 
 
 class KGMultiHop:
@@ -48,7 +48,12 @@ class KGMultiHop:
                 if not row[0] or row[0].startswith("#"):
                     continue
                 # Skip header if present
-                if len(row) >= 3 and row[0].lower() == "src" and row[1].lower() == "rel" and row[2].lower() == "tgt":
+                if (
+                    len(row) >= 3
+                    and row[0].lower() == "src"
+                    and row[1].lower() == "rel"
+                    and row[2].lower() == "tgt"
+                ):
                     continue
                 if len(row) < 3:
                     # malformed line; skip

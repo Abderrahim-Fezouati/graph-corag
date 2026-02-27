@@ -100,6 +100,8 @@ Minimum analyzed-row fields expected by the orchestrator:
   --out_dir .tmp\pipeline_eval_kg_aligned\out
 ```
 
+Runtime note: `src/graphcorag/text_retriever.py` now applies overlay at load time. It loads base `umls_dict.txt` (`kg_id -> list[str]`) and merges `umls_dict.overlay.json` as delta aliases per `kg_id` (deduplicated, stable order).
+
 ### Optional Stage 2b: Adapter transform (only if your upstream schema differs)
 
 If your Stage 1 output does not include `candidates`, create an adapter file first:
@@ -149,6 +151,15 @@ Recommended practice:
 - Keep raw downloads and large generated artifacts out of Git.
 - Store working corpora/KG files under `data/` locally.
 - Maintain reproducible build scripts for derived dictionaries and overlays.
+
+## Build KB From Raw
+
+Graph-CORAG includes a reproducible KB build system under `kb/build/` that converts raw datasets into versioned runtime artifacts.
+
+- Driver command:
+  - `python -m kb.build.build_all --raw_root ... --out_root data_processed/graphcorag --version v1`
+- Full instructions:
+  - `docs/kb_build.md`
 
 ## Running on a Server
 
